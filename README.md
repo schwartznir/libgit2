@@ -1,3 +1,27 @@
+> **This is a modified fork: libgit2 without xdiff.**
+>
+> Fork of [ibrahimcetin/libgit2](https://github.com/ibrahimcetin/libgit2) tag `1.9.2`
+> (itself upstream libgit2 `5ab90d3` plus a SwiftPM `Package.swift`), made for the
+> Notaker app. Changes, all on branch `noxdiff`:
+>
+> - **Removed `deps/xdiff`** (LibXDiff, LGPL-2.1-or-later; `xhistogram.c` EDL-1.0),
+>   so no LGPL code is compiled into, or shipped with, this library.
+> - **Added `deps/noxdiff/`**: `xdiff.h` declares only the names libgit2's own
+>   sources use, and `noxdiff.c` defines `xdl_diff` and `xdl_merge` as stubs that
+>   do no work, set a libgit2 error and return -1.
+> - **`src/libgit2/diff_xdiff.c`**: checks `xdl_diff`'s result, so a stubbed diff is
+>   an error instead of a silently empty patch.
+> - **`Package.swift`**: compiles `deps/noxdiff` in place of `deps/xdiff`.
+>
+> Consequence: anything that produces text hunks fails with an error — patches,
+> `git_diff_foreach`/`git_diff_print`/`git_diff_stats`, blame, textual merges, and
+> `git_index_add_all`/`git_index_update_all` (they run `git_diff_foreach`). The rest
+> of libgit2 (index by path, trees, commits, refs, config, status, the list of
+> changed files from `git_diff_*`, fetch, push) is unaffected. Only the SwiftPM build
+> is maintained here: the CMake build and libgit2's own test suite still expect
+> `deps/xdiff` and were not updated. Licence unchanged: GPL-2.0 with the Linking
+> Exception, see `COPYING`.
+
 libgit2 - the Git linkable library
 ==================================
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9609/badge)](https://www.bestpractices.dev/projects/9609)

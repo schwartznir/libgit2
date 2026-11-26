@@ -28,7 +28,6 @@ var excludedPaths: [String] = [
 	"deps/pcre/LICENCE",
 	"deps/pcre/cmake/",
 	"deps/pcre/config.h.in",
-	"deps/xdiff/CMakeLists.txt",
 	"deps/zlib/CMakeLists.txt",
 	"deps/zlib/LICENSE",
 	"deps/ntlmclient/CMakeLists.txt",
@@ -66,7 +65,9 @@ var cSettings: [CSetting] = [
 	// Header search paths
 	.headerSearchPath("deps/llhttp"),
 	.headerSearchPath("deps/pcre"),
-	.headerSearchPath("deps/xdiff"),
+	// deps/xdiff (LibXDiff, LGPL-2.1) is not in this fork; deps/noxdiff
+	// stands in for it. See README.md.
+	.headerSearchPath("deps/noxdiff"),
 	.headerSearchPath("deps/zlib"),
 	.headerSearchPath("deps/ntlmclient"),
 	.headerSearchPath("src/libgit2"),
@@ -239,7 +240,7 @@ let package = Package(
 			sources: [
 				"deps/llhttp",
 				"deps/pcre",
-				"deps/xdiff",
+				"deps/noxdiff",
 				"deps/zlib",
 				"deps/ntlmclient",
 				"src/libgit2",

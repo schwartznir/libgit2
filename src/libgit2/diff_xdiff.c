@@ -223,8 +223,18 @@ static int git_xdiff(git_patch_generated_output *output, git_patch_generated *pa
 	    git_patch_generated_new_data(&info.xd_new_data.ptr, &info.xd_new_data.size, patch) < 0)
 		return -1;
 
-	xdl_diff(&info.xd_old_data, &info.xd_new_data,
-		&xo->params, &xo->config, &xo->callback);
+	/*
+	 * Upstream ignores this result, because there xdl_diff fails only
+	 * when a callback did, and the callback leaves its error in
+	 * xo->output.error.  In the no-xdiff build (README.md) xdl_diff
+	 * always fails without calling back, and ignoring that would report
+	 * every text change as an empty patch.  So a failure no callback
+	 * explains is returned as one.
+	 */
+	if (xdl_diff(&info.xd_old_data, &info.xd_new_data,
+		&xo->params, &xo->config, &xo->callback) < 0 &&
+	    !xo->output.error)
+		xo->output.error = -1;
 
 	git_diff_find_context_clear(&findctxt);
 
